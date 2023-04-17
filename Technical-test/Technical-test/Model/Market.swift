@@ -7,8 +7,7 @@
 
 import Foundation
 
-
-class Market {
-    let marketName:String = "SMI"
+class Market: Decodable {
+    var marketName:String = "SMI"
     var quotes:[Quote]? = []
 }
