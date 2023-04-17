@@ -7,23 +7,26 @@
 
 import UIKit
 
+enum FavoriteButtonState: String {
+    case addToFavorites = "Add to favorites"
+    case removeFromFavorites = "Remove from favorites"
+}
+
 class QuoteDetailsViewController: UIViewController {
-    
-    private var quote:Quote? = nil
-    
-    let symbolLabel = UILabel()
-    let nameLabel = UILabel()
-    let lastLabel = UILabel()
-    let currencyLabel = UILabel()
-    let readableLastChangePercentLabel = UILabel()
-    let favoriteButton = UIButton()
-    
-    
-    
+    private let symbolLabel = UILabel()
+    private let nameLabel = UILabel()
+    private let lastLabel = UILabel()
+    private let currencyLabel = UILabel()
+    private let readableLastChangePercentLabel = UILabel()
+    private let favoriteButton = UIButton()
+    private let quote: Quote
+    private var favoriteButtonState: FavoriteButtonState {
+        return quote.isFavorite ? .removeFromFavorites : .addToFavorites
+    }
     
     init(quote:Quote) {
-        super.init(nibName: nil, bundle: nil)
         self.quote = quote
+        super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -36,11 +39,11 @@ class QuoteDetailsViewController: UIViewController {
         view.backgroundColor = .white
         addSubviews()
         setupAutolayout()
-        symbolLabel.text = quote?.symbol
-        nameLabel.text = quote?.name
-        lastLabel.text = quote?.last
-        currencyLabel.text = quote?.currency
-        readableLastChangePercentLabel.text = quote?.readableLastChangePercent
+        symbolLabel.text = quote.symbol
+        nameLabel.text = quote.name
+        lastLabel.text = quote.last
+        currencyLabel.text = quote.currency
+        readableLastChangePercentLabel.text = quote.readableLastChangePercent
         
     }
     
@@ -65,7 +68,7 @@ class QuoteDetailsViewController: UIViewController {
         readableLastChangePercentLabel.layer.borderColor = UIColor.black.cgColor
         readableLastChangePercentLabel.font = .systemFont(ofSize: 30)
         
-        favoriteButton.setTitle("Add to favorites", for: .normal)
+        favoriteButton.setTitle(favoriteButtonState.rawValue, for: .normal)
         favoriteButton.layer.cornerRadius = 6
         favoriteButton.layer.masksToBounds = true
         favoriteButton.layer.borderWidth = 3
@@ -121,14 +124,19 @@ class QuoteDetailsViewController: UIViewController {
                         
             favoriteButton.topAnchor.constraint(equalTo: readableLastChangePercentLabel.bottomAnchor, constant: 30),
             favoriteButton.centerXAnchor.constraint(equalTo: safeArea.centerXAnchor),
-            favoriteButton.widthAnchor.constraint(equalToConstant: 150),
+            favoriteButton.widthAnchor.constraint(equalToConstant: 200),
             favoriteButton.heightAnchor.constraint(equalToConstant: 44),
             
         ])
     }
     
-    
     @objc func didPressFavoriteButton(_ sender:UIButton!) {
-        // TODO
+        quote.isFavorite = favoriteButtonState == .addToFavorites ? true : false
+        updateFavoriteButtonTitle()
+    }
+    
+    private func updateFavoriteButtonTitle() {
+        favoriteButton.setTitle(favoriteButtonState.rawValue,
+                                for: .normal)
     }
 }
